@@ -11,10 +11,7 @@ const Header = () => {
   return (
     <header>
         <div className="main-container inner">
-            <Link href="/" className={cn('nav-link', {
-                'is-active': pathname === '/',
-                'is-home': true,
-            })}>
+            <Link href="/" >
                 <Image
                     src="/logo.svg"
                     alt="CoinPulse Logo"
@@ -24,12 +21,15 @@ const Header = () => {
             </Link>
             <nav>
                 <Link href="/" className={cn('nav-link', {
-                'is-active': pathname === '/coins',
+                'is-active': pathname === '/',
+                'is-home': true,
             })}>
                     Home
                 </Link>
                 <p>Search Modal</p>
-                <Link href="/coins">
+                <Link href="/coins" className={cn('nav-link', {
+                'is-active': pathname === '/coins',
+            })}>
                     All coins
                 </Link>
             </nav>
