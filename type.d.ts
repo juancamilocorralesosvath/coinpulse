@@ -306,6 +306,12 @@ interface SearchItemProps {
 
 interface CoinGeckoErrorBody {
   error?: string;
+  status?: {
+    error_code?: number;
+    error_message?: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
 }
 
 type QueryParams = Record<string, string | number | boolean | undefined>;
