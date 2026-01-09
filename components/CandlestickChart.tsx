@@ -14,7 +14,6 @@ const CandlestickChart = ({ children, data, coinId, height = 360, initialPeriod 
     const [ohlcData, setOhlcData] = useState<OHLCData[]>(data ?? []);
     const [isPending, startTransition] = useTransition();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const fetchOHLCData = async (selectedPeriod: Period) => {
         const { days } = PERIOD_CONFIG[selectedPeriod];
@@ -63,11 +62,8 @@ const CandlestickChart = ({ children, data, coinId, height = 360, initialPeriod 
         });
         const series = chart.addSeries(CandlestickSeries, getCandlestickConfig());
 
-        const convertedToSeconds = ohlcData.map(
-            (item) => [Math.floor(item[0] / 1000), item[1], item[2], item[3], item[4]] as OHLCData,
-        );
-        series.setData(convertOHLCData(convertedToSeconds));
-        chart.timeScale().fitContent();
+        // keep creation granular: don't set data here. Data updates are
+        // handled in the separate effect that listens to `ohlcData` and `period`.
         chartRef.current = chart;
         candleSeriesRef.current = series;
 
@@ -85,7 +81,7 @@ const CandlestickChart = ({ children, data, coinId, height = 360, initialPeriod 
             chartRef.current = null;
             candleSeriesRef.current = null;
         };
-    }, [height, ohlcData, period]);
+    }, [height]);
 
     useEffect(() => {
         if (!candleSeriesRef.current) return;

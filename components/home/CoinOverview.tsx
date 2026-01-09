@@ -9,8 +9,7 @@ import CandlestickChart from '../CandlestickChart'
 const CoinOverview = async () => {
  
   try {
-    // de esta manera los llamamos en paralelo
-    // solamente cuando ambas terminen vamos a continuar
+    // parallel call
     const [coin, coinOHLCData] = await Promise.all([
        fetcher<CoinDetailsData>('coins/bitcoin', {
         dex_pair_format: 'symbol'
