@@ -66,7 +66,14 @@ export function trendingClasses(value: number) {
 export function timeAgo(date: string | number | Date): string {
   const now = new Date();
   const past = new Date(date);
-  const diff = now.getTime() - past.getTime(); // difference in ms
+
+  // invalid date input
+  if (isNaN(past.getTime())) return 'invalid date';
+
+  // allow future dates: compute absolute diff and choose wording
+  let diff = now.getTime() - past.getTime(); // ms
+  const isFuture = diff < 0;
+  if (isFuture) diff = Math.abs(diff);
 
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -74,13 +81,24 @@ export function timeAgo(date: string | number | Date): string {
   const days = Math.floor(hours / 24);
   const weeks = Math.floor(days / 7);
 
-  if (seconds < 60) return 'just now';
-  if (minutes < 60) return `${minutes} min`;
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''}`;
-  if (days < 7) return `${days} day${days > 1 ? 's' : ''}`;
-  if (weeks < 4) return `${weeks} week${weeks > 1 ? 's' : ''}`;
+  if (!isFuture) {
+    if (seconds < 60) return 'just now';
+    if (minutes < 60) return `${minutes} min`;
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''}`;
+    if (days < 7) return `${days} day${days > 1 ? 's' : ''}`;
+    if (weeks < 4) return `${weeks} week${weeks > 1 ? 's' : ''}`;
 
-  // Format date as YYYY-MM-DD
+    // Format date as YYYY-MM-DD
+    return past.toISOString().split('T')[0];
+  }
+
+  // future date wording
+  if (seconds < 60) return 'in a few seconds';
+  if (minutes < 60) return `in ${minutes} min`;
+  if (hours < 24) return `in ${hours} hour${hours > 1 ? 's' : ''}`;
+  if (days < 7) return `in ${days} day${days > 1 ? 's' : ''}`;
+  if (weeks < 4) return `in ${weeks} week${weeks > 1 ? 's' : ''}`;
+
   return past.toISOString().split('T')[0];
 }
 
