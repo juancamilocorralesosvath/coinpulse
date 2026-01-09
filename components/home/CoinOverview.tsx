@@ -12,10 +12,10 @@ const CoinOverview = async () => {
     // de esta manera los llamamos en paralelo
     // solamente cuando ambas terminen vamos a continuar
     const [coin, coinOHLCData] = await Promise.all([
-      await fetcher<CoinDetailsData>('coins/bitcoin', {
+       fetcher<CoinDetailsData>('coins/bitcoin', {
         dex_pair_format: 'symbol'
       }),
-      await fetcher<OHLCData[]>('coins/bitcoin/ohlc', {
+       fetcher<OHLCData[]>('coins/bitcoin/ohlc', {
         vs_currency: 'usd',
         days: 1,
         // not available for the demo plan
