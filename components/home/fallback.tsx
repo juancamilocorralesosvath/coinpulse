@@ -71,3 +71,53 @@ export const TrendingCoinsFallback = () => {
 }
 
 export default null
+
+export const CategoriesFallback = () => {
+  const columns = [
+    {
+      header: 'Category',
+      cellClassName: 'category-cell',
+      cell: () => <div className="header-title-skeleton" style={{ width: 140 }} />,
+    },
+    {
+      header: 'Top Gainers',
+      cellClassName: 'top-gainers-cell',
+      cell: () => (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div className="header-image" style={{ width: 28, height: 28 }} />
+          <div className="header-image" style={{ width: 28, height: 28 }} />
+          <div className="header-image" style={{ width: 28, height: 28 }} />
+        </div>
+      ),
+    },
+    {
+      header: '24h Change',
+      cellClassName: 'change-header-cell',
+      cell: () => <div className="value-skeleton-sm" />,
+    },
+    {
+      header: 'Market Cap',
+      cellClassName: 'market-cap-cell',
+      cell: () => <div className="value-skeleton-md" />,
+    },
+    {
+      header: '24h Volume',
+      cellClassName: 'volume-cell',
+      cell: () => <div className="value-skeleton-md" />,
+    },
+  ]
+
+  const data = new Array(6).fill(null).map((_, i) => ({ id: `fallback-cat-${i}` }))
+
+  return (
+    <div id="categories-fallback">
+      <h4>Top Categories</h4>
+      <DataTable
+        columns={columns as any}
+        data={data as any}
+        rowKey={(row: any, idx: number) => row.id ?? idx}
+        tableClassName="mt-3"
+      />
+    </div>
+  )
+}
