@@ -4,8 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { cn, formatPercentage, formatCurrency } from "@/lib/utils";
+import CoinsPagination from "@/components/CoinsPagination";
 
 const Coins = async ({ searchParams }: NextPageProps) => {
+    const perPage = 10;
+    const {page} = await searchParams;
+    const currentPage = Number(page) || 1;
 
   const coinsData = await fetcher<CoinMarketData[]>("/coins/markets", {
     vs_currency: "usd",
@@ -68,6 +72,9 @@ const Coins = async ({ searchParams }: NextPageProps) => {
     },
   ];
 
+  const hasMorePages = coinsData.length === perPage
+  
+
   return (
     <main id="coins-page">
       <div className="content">
@@ -79,6 +86,7 @@ const Coins = async ({ searchParams }: NextPageProps) => {
           data={coinsData}
           rowKey={(coin) => coin.id}
         />
+        <CoinsPagination />
       </div>
     </main>
   );
