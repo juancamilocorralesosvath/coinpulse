@@ -7,13 +7,15 @@ import { cn, formatPercentage, formatCurrency } from "@/lib/utils";
 import CoinsPagination from "@/components/CoinsPagination";
 
 const Coins = async ({ searchParams }: NextPageProps) => {
-    const perPage = 10;
     const {page} = await searchParams;
+    const perPage = 10;
     const currentPage = Number(page) || 1;
 
   const coinsData = await fetcher<CoinMarketData[]>("/coins/markets", {
     vs_currency: "usd",
     order: "market_cap_desc",
+    per_page: perPage,
+    page: currentPage,
     sparkline: "false",
     price_change_percentage: "24h",
   });
@@ -73,6 +75,8 @@ const Coins = async ({ searchParams }: NextPageProps) => {
   ];
 
   const hasMorePages = coinsData.length === perPage
+
+  const estimatedTotalPages = currentPage >= 100 ? Math.ceil(currentPage /100) * 100 + 100 : 100; 
   
 
   return (
@@ -86,7 +90,7 @@ const Coins = async ({ searchParams }: NextPageProps) => {
           data={coinsData}
           rowKey={(coin) => coin.id}
         />
-        <CoinsPagination />
+        <CoinsPagination currentPage={currentPage} totalPages={estimatedTotalPages} hasMorePages={hasMorePages} />
       </div>
     </main>
   );
