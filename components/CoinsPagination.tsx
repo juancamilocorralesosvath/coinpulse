@@ -16,7 +16,7 @@ const CoinsPagination = ({
   currentPage,
   totalPages,
   hasMorePages
-}: Pagination) => {
+}: CoinsPaginationProps) => {
   const router = useRouter();
 
   const handlePageChange = (page: number) => {
@@ -30,7 +30,7 @@ const CoinsPagination = ({
   <PaginationContent className='pagination-content'>
 
     <PaginationItem className='pagination-control prev'>
-      <PaginationPrevious onClick={()=> currentPage > 1 && handlePageChange(currentPage - 1)} className={currentPage === 1 ? 'control-disabled' : 'control-button'}/>
+      <PaginationPrevious onClick={()=> { if (currentPage > 1) handlePageChange(currentPage - 1) }} className={currentPage === 1 ? 'control-disabled' : 'control-button'}/>
     </PaginationItem>
     <div className="pagination-pages">
       {pageNumbers.map((page, index) => 
@@ -39,7 +39,7 @@ const CoinsPagination = ({
             {page === ELLIPSIS ? (
               <span className='ellipsis'>...</span>
             ) : (
-              <PaginationLink onClick={()=> handlePageChange(page)} className={cn('page-link', {
+              <PaginationLink onClick={()=> typeof page === 'number' && handlePageChange(page)} className={cn('page-link', {
                 'page-link-active': currentPage === page
               })} >{page}</PaginationLink>
             )}
@@ -47,12 +47,9 @@ const CoinsPagination = ({
         )
       )}
     </div>
-    <PaginationItem>
-      <PaginationLink href="#">1</PaginationLink>
-    </PaginationItem>
  
     <PaginationItem className='pagination-control next'>
-      <PaginationNext onClick={()=> !isLastPage && handlePageChange(currentPage + 1)} className={isLastPage ? 'control-disabled' : 'control-button'} />
+      <PaginationNext onClick={()=> { if (!isLastPage) handlePageChange(currentPage + 1) }} className={isLastPage ? 'control-disabled' : 'control-button'} />
     </PaginationItem>
 
   </PaginationContent>
