@@ -56,3 +56,55 @@ export async function fetcher<T>(
 
     return await response.json()
 }
+
+export async function searchCoins(query: string, limit = 10): Promise<SearchCoin[]> {
+  if (!query) return [];
+
+  try {
+    const searchRes = await fetcher<{ coins: Array<{ id: string; name: string; symbol: string; market_cap_rank?: number | null; thumb: string; large: string }> }>('search', { query });
+    const coins = (searchRes.coins || []).slice(0, limit);
+    const ids = coins.map((c) => c.id).filter(Boolean);
+
+    if (ids.length === 0) {
+      return coins.map((c) => ({
+        id: c.id,
+        name: c.name,
+        symbol: c.symbol,
+        market_cap_rank: c.market_cap_rank ?? null,
+        thumb: c.thumb,
+        large: c.large,
+        data: { price: undefined, price_change_percentage_24h: 0 },
+      }));
+    }
+
+    const markets = await fetcher<CoinMarketData[]>('coins/markets', {
+      vs_currency: 'usd',
+      ids: ids.join(','),
+      per_page: ids.length,
+      price_change_percentage: '24h',
+    });
+
+    const marketMap = new Map(markets.map((m) => [m.id, m]));
+
+    const merged: SearchCoin[] = coins.map((c) => {
+      const m = marketMap.get(c.id);
+      return {
+        id: c.id,
+        name: c.name,
+        symbol: c.symbol,
+        market_cap_rank: c.market_cap_rank ?? null,
+        thumb: c.thumb,
+        large: c.large,
+        data: {
+          price: m?.current_price,
+          price_change_percentage_24h: m?.price_change_percentage_24h ?? 0,
+        },
+      };
+    });
+
+    return merged;
+  } catch (error) {
+    console.error('searchCoins error:', error);
+    return [];
+  }
+}
