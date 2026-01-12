@@ -5,13 +5,13 @@ import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 
-const CoinPage = async ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+const CoinPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   try {
     const [coin, coinOHLC] = await Promise.all([
-      fetcher<CoinDetailsData>(`coins/${id}`, { dex_pair_format: 'symbol' }),
-      fetcher<OHLCData[]>(`coins/${id}/ohlc`, { vs_currency: 'usd', days: 1, precision: 'full' }),
+      fetcher<CoinDetailsData>(`/coins/${id}`, { dex_pair_format: 'symbol' }),
+      fetcher<OHLCData[]>(`/coins/${id}/ohlc`, { vs_currency: 'usd', days: 1, precision: 'full' }),
     ]);
 
     return (
