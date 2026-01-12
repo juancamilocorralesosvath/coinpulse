@@ -130,8 +130,10 @@ export const SearchModal = ({
     const hasQuery = debouncedQuery.length > 0;
     const showTrending = !hasQuery && trendingCoins.length > 0;
 
-    const isSearchEmpty = !isSearching && !hasQuery && !showTrending;
-    const isTrendingListVisible = !isSearching && showTrending;
+    const isTrendingLoading = open && !hasQuery && isTrendingApi;
+
+    const isSearchEmpty = !isSearching && !hasQuery && !showTrending && !isTrendingLoading;
+    const isTrendingListVisible = !isSearching && !isTrendingLoading && showTrending;
 
     const isNoResults = !isSearching && hasQuery && searchResults.length === 0;
     const isResultsVisible = !isSearching && hasQuery && searchResults.length > 0;
@@ -163,6 +165,10 @@ export const SearchModal = ({
 
                 <CommandList className='list custom-scrollbar'>
                     {isSearching && <div className='empty'>Searching...</div>}
+
+                    {isTrendingLoading && (
+                        <div className='empty'>Loading trending coins...</div>
+                    )}
 
                     {isSearchEmpty && (
                         <div className='empty'>Type to search for coins...</div>
